@@ -1004,7 +1004,16 @@ fn main() {
         println!("cargo:rustc-link-lib={llama_libs_kind}=ggml-cpu");
     }
     for lib in llama_libs {
-        let link = format!("cargo:rustc-link-lib={}={}", llama_libs_kind, lib);
+        // On macOS, link ggml libraries with +whole-archive so their symbols
+        // take precedence over any other bundled ggml (e.g. whisper-rs-sys).
+        // Without this, the linker may resolve ggml symbols from an older,
+        // incompatible copy, causing crashes with newer model architectures.
+        let kind = if cfg!(target_os = "macos") && lib.starts_with("ggml") {
+            "static:+whole-archive"
+        } else {
+            &llama_libs_kind
+        };
+        let link = format!("cargo:rustc-link-lib={}={}", kind, lib);
         debug_log!("LINK {link}",);
         println!("{link}",);
     }
