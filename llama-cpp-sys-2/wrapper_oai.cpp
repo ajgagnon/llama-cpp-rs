@@ -288,7 +288,7 @@ extern "C" llama_rs_status llama_rs_apply_chat_template_with_tools_oaicompat(
             out_result->parser = llama_rs_dup_string(params.parser);
         }
         out_result->chat_format = static_cast<int>(params.format);
-        out_result->thinking_forced_open = params.thinking_forced_open;
+        out_result->thinking_forced_open = params.supports_thinking;
         out_result->grammar_lazy = params.grammar_lazy;
         const auto status_triggers = dup_trigger_array(
             params.grammar_triggers,
@@ -396,7 +396,7 @@ extern "C" llama_rs_status llama_rs_apply_chat_template_oaicompat(
             out_result->parser = llama_rs_dup_string(params_out.parser);
         }
         out_result->chat_format = static_cast<int>(params_out.format);
-        out_result->thinking_forced_open = params_out.thinking_forced_open;
+        out_result->thinking_forced_open = params_out.supports_thinking;
         out_result->grammar_lazy = params_out.grammar_lazy;
 
         const auto status_triggers = dup_trigger_array(
@@ -451,7 +451,7 @@ extern "C" llama_rs_status llama_rs_chat_parse_to_oaicompat(
         common_chat_parser_params syntax;
         syntax.format = static_cast<common_chat_format>(chat_format);
         syntax.parse_tool_calls = parse_tool_calls;
-        syntax.thinking_forced_open = thinking_forced_open;
+        (void)thinking_forced_open; // deprecated in llama.cpp; retained for ABI compatibility
         if (parser_data && std::strlen(parser_data) > 0) {
             syntax.parser.load(parser_data);
         }
@@ -531,7 +531,7 @@ extern "C" struct llama_rs_chat_parse_state_oaicompat * llama_rs_chat_parse_stat
         common_chat_parser_params syntax;
         syntax.format = static_cast<common_chat_format>(chat_format);
         syntax.parse_tool_calls = parse_tool_calls;
-        syntax.thinking_forced_open = thinking_forced_open;
+        (void)thinking_forced_open; // deprecated in llama.cpp; retained for ABI compatibility
         if (parser_data && std::strlen(parser_data) > 0) {
             syntax.parser.load(parser_data);
         }
